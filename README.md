@@ -1,134 +1,57 @@
-<div align="center">
+# Medical Paper X-Ray
 
-**English** · [简体中文](./README.zh-CN.md)
+A medical/biomedical fork of [Wang-auspicious/paper-xray](https://github.com/Wang-auspicious/paper-xray). It keeps the original project's core idea — deep reading instead of abstract paraphrase, skeptical appraisal, and Markdown/interactive HTML delivery — but replaces the computer-science-specific framework with clinical epidemiology, evidence-based medicine, biostatistics, causal inference, and medical research methodology.
 
-# Paper X-Ray
+## What it asks instead
 
-**A deep-reading skill that reconstructs how a paper was actually thought up — not what its abstract says.**
+Medical Paper X-Ray focuses on the questions that determine whether a biomedical paper is actually believable and useful:
 
-把一篇论文还原成作者真实思考过程的深度解读 Skill，而不是复述它的摘要。
+- What is the exact clinical/biological question and estimand?
+- What strength of causal, diagnostic, or predictive claim does the design permit?
+- Do registry, protocol, SAP, supplement, peer-review history, and publication agree?
+- What are the absolute effects, not only relative effects and p-values?
+- How much clinically meaningful benefit or harm is still compatible with the confidence interval?
+- How do missing data, multiplicity, subgroup analysis, time zero, analysis populations, and model choices affect the conclusion?
+- Are harms treated as seriously as efficacy?
+- Who does the result apply to, and who was effectively excluded from the evidence?
+- What did this paper actually change when placed back into the full evidence chain?
 
-![Skill](https://img.shields.io/badge/skill-paper--xray-c1502e)
-![Prompt](https://img.shields.io/badge/prompt-verbatim_15_sections-2e7d4f)
-![Outputs](https://img.shields.io/badge/outputs-markdown__html-58C4DD)
-![Agent](https://img.shields.io/badge/agent-Claude_Code-d97757)
-![License](https://img.shields.io/badge/license-MIT-8a8172)
+Supported study types include randomized trials, non-randomized comparative effectiveness studies and target-trial emulations, cohorts/case-control/cross-sectional studies, diagnostic accuracy studies, prediction models and medical AI, systematic reviews/meta-analyses, guidelines, case series, translational/animal/in-vitro work, biomarkers/omics/genetics, health economics, and qualitative/mixed-methods research.
 
-![Paper X-Ray banner](./assets/hero-banner.png)
+## Not a defensive reviewer
 
-</div>
+The goal is the **strongest defensible conclusion**, not the safest-sounding conclusion. The skill explicitly avoids boilerplate such as “more research is needed” when a sharper judgment is possible.
 
----
+When supported by evidence, it can directly call out outcome switching, data-driven analyses, spin, post-hoc rationalization, or claims that exceed the registered analysis. Methodological constraints remain strict: association is not silently upgraded to causation, hazard ratios are not rewritten as cumulative risk ratios, reporting completeness is not confused with low risk of bias, and a single RCT is not casually assigned a GRADE certainty rating.
 
-## Why Paper X-Ray
+Three forced steps make the appraisal harder to game:
 
-Most paper explanations restate the paper. Paper X-Ray recovers what the paper left out: the specific scene where prior methods broke, the bet the authors placed and the evidence for it, which designs carry the result and which are decoration, what each symbol looks like on a concrete example, and where the authors are confident versus bluffing.
+1. **Claim ledger** — identify the 3–7 load-bearing claims and settle them one by one.
+2. **Independent numerical audit** — recompute key effects, denominators, absolute differences, NNT/NNH, and spot-check CIs/tests when the paper exposes enough data.
+3. **Red-team pass** — identify the strongest alternative explanation, the hidden assumption most likely to overturn the conclusion, and the authors' best evidence against that critique.
 
-The method pairs a Hinton-style voice (plain language, mechanisms over adjectives, honest about weak explanations) with a 3Blue1Brown-style exposition (show first, then compute; one idea per figure; one color per symbol).
+## Reporting quality ≠ risk of bias ≠ certainty of evidence
 
-The reader should finish understanding the paper more deeply than from reading the original ten times.
-
-## Install
-
-**One-line prompt** — paste this into your agent and it installs the skill itself:
-
-```text
-Install SKILL.md from the paper-xray repository as a skill named paper-xray into my agent skills directory, then confirm it is registered and callable.
-```
-
-**Git clone** (recommended — keeps the language files and calibration log in place):
-
-```bash
-git clone https://github.com/Wang-auspicious/paper-xray.git ~/.claude/skills/paper-xray
-```
-
-**Manual** — if you only want the prompt:
-
-```bash
-mkdir -p ~/.claude/skills/paper-xray
-cp SKILL.md ~/.claude/skills/paper-xray/SKILL.md
-```
-
-On Windows the skills directory is `C:\Users\<you>\.claude\skills\paper-xray`.
+The skill keeps these layers separate. Current examples include CONSORT 2025/SPIRIT 2025 for randomized-trial reporting/protocols, RoB 2 for randomized-trial bias, ROBINS-I V2 for non-randomized intervention studies, STARD/STARD-AI plus QUADAS-3 for diagnostic accuracy, and TRIPOD+AI plus PROBAST+AI for prediction models. It verifies current tool versions when network access is available rather than treating old checklists as timeless.
 
 ## Usage
 
-```text
-/paper-xray D:/papers/rope.pdf
-/paper-xray 2104.09864 html
-```
-
-1. **Provide the paper** — a local PDF, an arXiv identifier or link, or pasted text. Attach public code and the original figure directory when available: code takes precedence over the prose, and figures are referenced by absolute path.
-2. **Pick a branch** — `md` for the text edition, `html` for the interactive visual edition. Specify neither and the skill asks once.
-3. **Wait for the read** — the skill reads the full text including appendices, footnotes, and captions, then writes the document section by section. Long documents are appended incrementally and never compressed to fit a single response.
-
-The more you give it, the sharper the output: a paper with an appendix and an official repository lets the skill catch the details that only exist in the code — normalization, warmup, data filtering — which are sometimes where the performance actually comes from.
-
-## Features
-
-- **Author reconstruction** — finds the structural failure behind the work, the authors' strongest card, and where the evidence sits.
-- **Concrete mathematics** — every symbol ships with its shape and meaning; every key formula is preceded by its purpose and followed by a hand-computable micro-example.
-- **Full worked examples** — multi-round traces carrying real state, run on both the paper's method and the baseline, down to the step where the baseline breaks.
-- **Skeptical review** — hyperparameters, ablations, baseline alignment, leakage, cost, and scope get checked; missing information is marked as missing, never papered over.
-- **Two delivery branches** — `md` for a long-form Markdown document; `html` for a self-contained interactive page (KaTeX, parameter sliders, step-through traces, SVG/Canvas).
-- **Paper-type adaptation** — emphasis shifts across methods, theory, systems, empirical studies, agent/LLM pipelines, and datasets.
-- **Bilingual by design** — Chinese-dominant requests use the specification in `SKILL.md`; English-dominant requests use `references/SKILL.en.md`. One repository, one entry point.
-
-## Showcase
-
-Top row: an interactive HTML x-ray (DINO), English and Chinese. Bottom row: the complete prompt, rendered as paginated A4 sheets for presentation and sharing.
-
-![Interactive HTML x-ray output and the paginated A4 prompt, English and Chinese](./assets/showcase-grid.jpg)
-
-Four screens from the same document at 1600×900 each — the output **after the figure specification was rewritten**: color carries a role rather than decorating, a box holds a name and nothing else, wires run horizontally and vertically only, and a figure contains no title, no legend, no filter. Every screen keeps the table of contents flush left and the body running to the right edge.
-
-![Four screens of the DINO x-ray produced under the revised figure specification](./assets/dino-screens-4up.png)
-
-## Live demos
-
-Open these directly in a browser — single files, no build, no server.
-
-- [`demos/dino-xray.html`](./demos/dino-xray.html) — the full Chinese x-ray of **DINO** (ICCV 2021), the same document as the showcase above: six interactive figures (a step-through of student/teacher, a temperature slider on the collapse study, an EMA slider, click-to-select loss pairings), the ablation table, and the reproduction checklist. ~19 screens at 1600×900.
-- [`demos/figure-kit.html`](./references/figure-kit.html) — the figure language on its own: role colors, box/wire/container rules, one encoder–decoder architecture, three small figures, and the `FK.lint()` self-check. Copy the `FIGKIT TOKENS` and `FIGKIT JS` blocks into your own page.
-- `demos/hispf-32-node-demo.html`, `demos/asitpofborscht-style-lab.html` — earlier studies from the same figure language.
-
-## Repository Layout
+Install `SKILL.md` as `medical-paper-xray` together with `references/medical-methods-router.md` and `references/calibration-log.md`.
 
 ```text
-paper-xray/
-├── SKILL.md                        # The skill: Chinese specification + delivery rules (verbatim, 15 sections)
-├── references/
-│   ├── SKILL.en.md                 # English specification, written as native technical prose
-│   ├── figure-kit.html             # Figure kit: role colors, layout rules, copy-paste CSS + JS, FK.lint()
-│   └── calibration-log.md          # Preferences accumulated in use (starts empty)
-├── demos/                          # Finished outputs and figure-language studies (open directly in a browser)
-│   ├── dino-xray.html              # Full DINO x-ray, Chinese, six interactive figures
-│   ├── hispf-32-node-demo.html     # Earlier figure-language study
-│   └── asitpofborscht-style-lab.html
-├── README.md                       # This file
-├── README.zh-CN.md                 # 中文文档
-├── LICENSE
-└── assets/
-    ├── hero-banner.png             # Project banner
-    ├── dino-screens-4up.png        # Four screens, revised figure spec
-    ├── showcase-grid.jpg           # 2×2 showcase, English captions
-    ├── showcase-grid.zh-CN.jpg     # 2×2 showcase, Chinese captions
-    ├── dino-en.png                 # HTML x-ray preview, English
-    ├── dino-zh.png                 # HTML x-ray preview, Chinese
-    ├── showcase-en.png             # A4 prompt preview, English
-    └── showcase-a4.png             # A4 prompt preview, Chinese
+/medical-paper-xray /path/to/paper.pdf clinical
+/medical-paper-xray 10.xxxx/xxxxx methods
+/medical-paper-xray PMID:12345678 journal-club html
 ```
 
-## Star History
+Modes:
 
-If this saved you a reread, a star helps other people find it.
+- `clinical`: absolute effects, harms, patient-important outcomes, applicability, and practice relevance.
+- `methods`: design, estimand, statistics, causal inference, bias, registry/protocol/SAP, reproducibility.
+- `journal-club`: adds 8–12 likely questions with answers plus three high-value discussion points.
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Wang-auspicious/paper-xray&type=Date&theme=dark">
-  <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Wang-auspicious/paper-xray&type=Date&theme=light">
-  <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Wang-auspicious/paper-xray&type=Date&theme=light">
-</picture>
+The original `references/figure-kit.html` remains useful for the HTML branch. Legacy CS demos may remain in the fork for provenance, but they are not part of the medical skill specification.
 
-## License
+## License and attribution
 
-MIT — see [LICENSE](./LICENSE).
+The upstream project is MIT licensed. This fork retains attribution while substantially rewriting the methodology for biomedical research appraisal.
