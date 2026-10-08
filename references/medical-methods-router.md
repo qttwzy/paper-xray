@@ -58,7 +58,7 @@
 - propensity score / weighting / matching 的 balance 与 weight diagnostics；
 - negative controls / quantitative bias analysis / sensitivity to unmeasured confounding。
 
-偏倚思路：优先 ROBINS-I V2（2026 已成为当前版本）；若文章或历史评价使用旧版，可同时说明版本差异，但不要机械沿用旧域。
+偏倚思路：可优先参考 ROBINS-I V2（2025 年 11 月发布修订草案，仍可能继续调整）；使用时记录具体版本日期。若需要与既有系统综述或历史评价保持可比，可同时说明旧版 ROBINS-I 的差异，但不要机械沿用旧域。
 
 ## 3. 队列 / 病例对照 / 横断面 / 病因研究
 
