@@ -1,134 +1,69 @@
-<div align="center">
+# Medical Paper X-Ray
 
-[English](./README.md) · **简体中文**
+这是对 [Wang-auspicious/paper-xray](https://github.com/Wang-auspicious/paper-xray) 的医学论文专用改造方案，保留原项目“深读而非摘要复述、怀疑式审读、MD/HTML 双交付”的核心思想，把计算机科学论文的分析框架替换为临床流行病学、循证医学、生物统计和医学研究方法框架。
 
-# Paper X-Ray
+## 它和原版最重要的区别
 
-**把一篇论文还原成作者真实思考过程的深度解读 Skill，而不是复述它的摘要。**
+原版 Paper X-Ray 的核心问题是“这个方法为什么这样设计、哪个模块真正承重”。医学版把核心问题换成：
 
-A deep-reading skill that reconstructs how a paper was actually thought up — not what its abstract says.
+- 研究问题和 estimand 到底是什么；
+- 研究设计允许多强的因果/诊断/预测结论；
+- primary endpoint、注册记录、protocol、SAP 与发表稿是否一致；
+- 相对效应背后的绝对获益/伤害有多大；
+- 置信区间允许哪些临床上重要的可能性；
+- 失访、多重性、亚组、缺失数据、分析集如何影响结论；
+- 安全性是否与 efficacy 被同等认真地报告；
+- 结果对真实患者是否可推广；
+- 单篇论文放回整条证据链后究竟改变了什么。
 
-![Skill](https://img.shields.io/badge/skill-paper--xray-c1502e)
-![Prompt](https://img.shields.io/badge/prompt-15_节完整版-2e7d4f)
-![Outputs](https://img.shields.io/badge/输出-Markdown_HTML-58C4DD)
-![Agent](https://img.shields.io/badge/适配-Claude_Code-d97757)
-![License](https://img.shields.io/badge/协议-MIT-8a8172)
+## 支持的研究类型
 
-![Paper X-Ray 横幅](./assets/hero-banner.png)
+RCT、非随机干预与真实世界比较效果、队列/病例对照/横断面、诊断准确性、预测模型/医学 AI、系统综述/meta-analysis、临床指南、病例系列、基础/动物/转化、生物标志物与组学、健康经济学、定性/混合方法。
 
-</div>
+## 三层审读，避免常见误区
 
----
+1. **报告质量**：CONSORT / STROBE / PRISMA / STARD / TRIPOD 等回答“有没有把该报告的信息写清楚”。
+2. **偏倚风险**：RoB 2 / ROBINS-I / QUADAS / PROBAST 等思想回答“这个具体结果可能偏到什么程度”。
+3. **证据确定性与临床决策**：在足够的 evidence body 上再使用类似 GRADE 的框架；不会给单篇 RCT 随手贴“GRADE 高质量”。
 
-## 为什么是 Paper X-Ray
+## 设计取向：不做“过度防御型”论文解读
 
-多数论文解读在复述论文。Paper X-Ray 还原论文没写出来的部分：前人方法真正失效的那个具体场景、作者押的那张底牌和它的证据在哪、哪些设计承重哪些只是装饰、每个符号在一个具体例子上长什么样、作者在哪里有把握、哪里在虚。
+这个 fork 的目标不是输出最安全、最圆滑的评论，而是输出**最强的可辩护判断**。新版明确禁止用“仅供参考”“仍需更多研究”“存在一定局限”这类套话替代分析。
 
-讲法结合了 Hinton 式的语气（朴素语言、机制优先于形容词、对站不住的解释直言不讳）和 3Blue1Brown 式的展示（先看见再计算、一图一事、一符号一色）。
+如果注册记录、protocol/SAP、审稿历史或统计结果支持更强判断，可以直接写：outcome switching、data-driven analysis、spin、post hoc rationalization、结论超过数据支持范围。与此同时，因果推断、效应指标解释、缺失数据、偏倚方向等方法学约束仍严格保留——那是准确性，不是“合规”。
 
-读者读完，对论文的理解应当超过反复读原文十遍。
+新版还增加三个强制步骤：
+- **核心主张台账**：只抓 3–7 个真正承重的 claim，逐条结算证据；
+- **独立数值审计**：能从论文数字重算的 primary result、绝对效应、NNT/NNH、分母和 CI 就自己重算；
+- **Red-team 反方测试**：强制找最可能推翻主结论的隐藏假设、替代解释和不同分析选择，再看作者最强的反证是什么。
 
 ## 安装
 
-**一句话提示词** —— 把这句原样发给你的 Agent，它自己会装：
+把本目录中的 `SKILL.md` 安装为 `medical-paper-xray`，并保留 `references/medical-methods-router.md` 与 `references/calibration-log.md`。
+
+示例：
 
 ```text
-把 paper-xray 仓库中的 SKILL.md 安装为名为 paper-xray 的 Skill，放入我的 Agent Skills 目录，并确认注册成功、可被调用。
+/medical-paper-xray /path/to/paper.pdf clinical
+/medical-paper-xray 10.xxxx/xxxxx methods
+/medical-paper-xray PMID:12345678 journal-club html
 ```
 
-**Git clone**（推荐——语言文件和偏好日志一并保留）：
+模式：
+- `clinical`：临床意义、绝对效应、安全性、外部有效性优先。
+- `methods`：研究设计、estimand、统计、偏倚、registry/protocol/SAP 优先。
+- `journal-club`：额外生成最可能被追问的问题和讨论点。
 
-```bash
-git clone https://github.com/Wang-auspicious/paper-xray.git ~/.claude/skills/paper-xray
-```
+## Fork 后建议的仓库改动
 
-**手动安装** —— 只想要提示词的话：
+- 用本版本 `SKILL.md` 替换上游 `SKILL.md`；
+- 增加 `references/medical-methods-router.md`；
+- 保留 `references/calibration-log.md`，只记录可泛化的阅读与输出偏好；
+- 原 `references/figure-kit.html` 可以继续保留，HTML 分支仍有价值；
+- 原来的 CS demo 建议移到 `archive/upstream-demos/` 或删除，避免 Agent 把 DINO/Transformer 示例当医学默认范式；
+- `references/SKILL.en.md` 建议删除：医学版主 skill 已按用户语言自动输出，避免维护两套超长 prompt 发生漂移；
+- 更新 README 并保留上游 MIT License 与 attribution。
 
-```bash
-mkdir -p ~/.claude/skills/paper-xray
-cp SKILL.md ~/.claude/skills/paper-xray/SKILL.md
-```
+## 许可与来源
 
-Windows 上的 Skills 目录是 `C:\Users\<你>\.claude\skills\paper-xray`。
-
-## 用法
-
-```text
-/paper-xray D:/papers/rope.pdf
-/paper-xray 2104.09864 html
-```
-
-1. **给论文** —— 本地 PDF、arXiv 编号或链接、粘贴正文都行。有公开代码和原图目录就一并给：代码的效力高于正文，原图按绝对路径引用。
-2. **选分支** —— `md` 是文字版，`html` 是交互视觉版；都不说，Skill 会问一次。
-3. **等它读完** —— Skill 通读全文（含附录、脚注、图注表注）后分节撰写。长文档分多次追加写完，不因单次输出长度压缩内容。
-
-给得越全，输出越准：有附录、有官方仓库的论文，Skill 能抓到只存在于代码里的细节——归一化、预热、数据过滤——而性能有时正来自这些地方。
-
-## 功能
-
-- **作者思路还原**——定位工作背后的结构性失败、作者最硬的那张底牌及其证据。
-- **公式具体化**——每个符号首次出现就给出形状与含义；每个关键公式先说明目的，再给一个能用手验证的微型实例。
-- **完整推演**——携带真实状态的多轮追踪，在论文方法和基线上各走一遍，精确到基线出错的那一步。
-- **怀疑式审读**——查超参数来源、消融是否真的隔离了变量、基线是否对齐、有没有数据泄露、代价与适用范围；信息缺失就明说缺失，不替它圆。
-- **两种交付分支**——`md` 出 Markdown 长文；`html` 出单文件交互网页（KaTeX、参数滑块、逐步播放、SVG/Canvas）。
-- **按论文类型调整重心**——方法、理论、系统、实证分析、智能体/LLM 流程、数据集各有展开重点。
-- **中英双语**——主体中文的请求走 `SKILL.md` 的中文规格；主体英文的请求走 `references/SKILL.en.md`。一个仓库，一个入口。
-
-## 展示
-
-上排是交互式 HTML 解读成品（DINO，中英各一份），下排是完整提示词的 A4 分页渲染版，用于展示和分享。
-
-![交互式 HTML 解读成品与 A4 分页提示词，中英对照](./assets/showcase-grid.zh-CN.jpg)
-
-同一份文档的四屏，每屏 1600×900 —— 这是**图形规范改版之后**的样子：颜色表示角色而不是装饰，框里只写运算名，连线只走横竖，图内不放标题、图例和任何滤镜。每一屏都是目录贴最左缘、正文从它右边一路铺到右缘。
-
-![图形规范改版后产出的 DINO 解读四屏](./assets/dino-screens-4up.png)
-
-## 在线 demo
-
-下面这些直接用浏览器打开就行——单文件、不用构建、不用起服务。
-
-- [`demos/dino-xray.html`](./demos/dino-xray.html) — DINO（ICCV 2021）的完整中文解读，就是上面展示图里那份：六个交互图（学生/老师逐步走一遍、塌缩研究的温度滑块、动量滑块、点选损失配对）、消融表和复现清单。1600×900 下约 19 屏。
-- [`references/figure-kit.html`](./references/figure-kit.html) — 图形语言本身：角色配色、方框/连线/容器的尺寸规则、一张编码器-解码器架构图、三张小图，以及 `FK.lint()` 自检。把 `FIGKIT TOKENS` 和 `FIGKIT JS` 两段整块复制走即可。
-- `demos/hispf-32-node-demo.html`、`demos/asitpofborscht-style-lab.html` — 同一套图形语言的早期试验。
-
-## 仓库结构
-
-```text
-paper-xray/
-├── SKILL.md                        # Skill 本体：中文规格 + 交付规则（15 节，一字未删）
-├── references/
-│   ├── SKILL.en.md                 # 英文规格，按英语技术写作习惯重写
-│   ├── figure-kit.html             # 图形工具包：角色配色、排版规则、可复制的 CSS + JS、FK.lint()
-│   └── calibration-log.md          # 使用中积累的偏好记录（初始为空）
-├── demos/                          # 成品与图形语言试验（可直接用浏览器打开）
-│   ├── dino-xray.html              # DINO 完整解读，中文，六个交互图
-│   ├── hispf-32-node-demo.html     # 早期图形语言试验
-│   └── asitpofborscht-style-lab.html
-├── README.md                       # English documentation
-├── README.zh-CN.md                 # 本文件
-├── LICENSE
-└── assets/
-    ├── hero-banner.png             # 项目横幅
-    ├── dino-screens-4up.png        # 改版规范后的四屏截图
-    ├── showcase-grid.jpg           # 2×2 展示图，英文图注
-    ├── showcase-grid.zh-CN.jpg     # 2×2 展示图，中文图注
-    ├── dino-en.png                 # HTML 解读预览，英文
-    ├── dino-zh.png                 # HTML 解读预览，中文
-    ├── showcase-en.png             # A4 提示词预览，英文
-    └── showcase-a4.png             # A4 提示词预览，中文
-```
-
-## Star History
-
-如果它帮你省下了一次重读，一个 star 能让更多人找到它。
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Wang-auspicious/paper-xray&type=Date&theme=dark">
-  <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Wang-auspicious/paper-xray&type=Date&theme=light">
-  <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Wang-auspicious/paper-xray&type=Date&theme=light">
-</picture>
-
-## 协议
-
-MIT，见 [LICENSE](./LICENSE)。
+上游 Paper X-Ray 使用 MIT License。这个改造保留来源说明，并在医学研究方法部分进行了专门重构。
